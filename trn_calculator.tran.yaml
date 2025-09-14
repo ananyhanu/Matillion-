@@ -1,0 +1,96 @@
+type: "transformation"
+version: "1.0"
+pipeline:
+  components:
+    stores:
+      type: "table-input"
+      parameters:
+        componentName: "stores"
+        database: "[Environment Default]"
+        schema: "[Environment Default]"
+        targetTable: "CUSTOMER"
+        columnNames:
+        - "CustomerID"
+        - "LastName "
+        - "FirstName "
+        - "BirthDate "
+        - "Gender "
+        - "ParticipantType"
+        - "RegionID"
+        - "MaritalStatus "
+        timeOffset:
+    Calculator:
+      type: "calculator"
+      sources:
+      - "stores"
+      parameters:
+        componentName: "Calculator"
+        includeInputColumns: "No"
+        calculations:
+        - - |
+            "FirstName "
+          - "FirstName"
+        - - |
+            "LastName "
+          - "LastName"
+        - - |
+            CONCAT("FirstName ", ' ', "LastName ")
+          - "FULL_NAME"
+        - - |
+            YEAR(TO_DATE("BirthDate ", 'YYYY-MM-DD'))
+          - "Birth_year"
+        - - |
+            MONTH(TO_DATE("BirthDate ", 'YYYY-MM-DD'))
+          - "birth_month"
+        - - |
+            DAY(TO_DATE("BirthDate ", 'YYYY-MM-DD'))
+          - "birth_day"
+    Aggregate:
+      type: "aggregate"
+      sources:
+      - "Calculator"
+      parameters:
+        componentName: "Aggregate"
+        groupings:
+        - "birth_month"
+        - "Birth_year"
+        aggregations:
+        - - "FULL_NAME"
+          - "Count Distinct"
+        groupingType: "Group By"
+    Rename:
+      type: "rename"
+      sources:
+      - "Aggregate"
+      parameters:
+        componentName: "Rename"
+        columnMapping:
+        - - "count_distinct_FULL_NAME"
+          - "total _customers"
+        - - "birth_month"
+          - "joining_month"
+        - - "Birth_year"
+          - "Joining_year"
+        includeInputColumns: "No"
+design:
+  components:
+    stores:
+      position:
+        x: 70
+        "y": 140
+      tempMetlId: 1
+    Calculator:
+      position:
+        x: 230
+        "y": 140
+      tempMetlId: 2
+    Aggregate:
+      position:
+        x: 390
+        "y": 140
+      tempMetlId: 3
+    Rename:
+      position:
+        x: 550
+        "y": 140
+      tempMetlId: 4

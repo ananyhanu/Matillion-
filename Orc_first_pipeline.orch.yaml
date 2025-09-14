@@ -7,6 +7,7 @@ pipeline:
       transitions:
         unconditional:
         - "Create Table"
+        - "SQL Script"
       parameters:
         componentName: "Start"
     Create Table:
@@ -151,20 +152,37 @@ pipeline:
       postProcessing:
         updateOutputMessage:
         updateScalarVariables:
+    SQL Script:
+      type: "sql-executor"
+      parameters:
+        componentName: "SQL Script"
+        scriptLocation: "Component"
+        declareSqlVariables: "Include selected"
+        variablesToInclude:
+        sqlScript: "delete from DEMO_DATABASE.DEMO_SCHEMA.\"stores\" where \"city\"\
+          \ = 'Baldwin'"
+      postProcessing:
+        updateOutputMessage:
+        updateScalarVariables:
 design:
   components:
     Start:
       position:
-        x: 0
-        "y": 0
-      tempMetlId:
+        x: -570
+        "y": -50
+      tempMetlId: 1
     Create Table:
       position:
-        x: 160
-        "y": 0
-      tempMetlId:
+        x: -430
+        "y": -50
+      tempMetlId: 2
     S3 Load:
       position:
-        x: 320
-        "y": 0
-      tempMetlId:
+        x: -300
+        "y": -50
+      tempMetlId: 3
+    SQL Script:
+      position:
+        x: -410
+        "y": -170
+      tempMetlId: 4
